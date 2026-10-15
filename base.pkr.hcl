@@ -43,6 +43,7 @@ source "tart-cli" "fedora" {
     "/ks.cfg" = templatefile(
       "${path.root}/kickstart.ks.pkrtpl",
       {
+        fedora_version = var.fedora_version
         ssh_public_key = trimspace(
           file(pathexpand(var.ssh_public_key_file))
         )
@@ -57,7 +58,7 @@ source "tart-cli" "fedora" {
   boot_command = [
     "c<wait>",
     "linux (cd0)/images/pxeboot/vmlinuz ",
-    "inst.stage2=hd:LABEL=Fedora-S-dvd-aarch64-44 ",
+    "inst.stage2=hd:LABEL=Fedora-S-dvd-aarch64-${var.fedora_version} ",
     "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg ",
     "ip=dhcp rd.neednet=1<enter>",
     "initrd (cd0)/images/pxeboot/initrd.img<enter>",
