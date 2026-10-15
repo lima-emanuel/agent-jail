@@ -1,11 +1,11 @@
 text
-url --url="https://mirrors.fedoraproject.org/metalink?repo=fedora-${fedora_version}&arch=aarch64"
+url --metalink="https://mirrors.fedoraproject.org/metalink?repo=fedora-$releasever&arch=$basearch"
 
 lang en_US.UTF-8
 keyboard --xlayouts=us
 timezone America/Sao_Paulo --utc
 
-network --bootproto=dhcp --device=link --activate
+network --bootproto=dhcp --device=link --activate --onboot=on
 firewall --enabled --service=ssh
 selinux --enforcing
 
@@ -16,9 +16,11 @@ sshkey --username=agent "${ssh_public_key}"
 services --enabled=sshd
 firstboot --disable
 
+ignoredisk --only-use=vda
 zerombr
-clearpart --all --initlabel
+clearpart --all --initlabel --drives=vda
 autopart --type=lvm
+bootloader --location=partition --boot-drive=vda
 
 %packages
 @^server-product-environment

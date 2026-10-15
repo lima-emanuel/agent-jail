@@ -67,7 +67,7 @@ packer init base.pkr.hcl
 ./session.sh build 44 "$PATH_TO_ISO"
 ```
 
-_Note: `build-base.sh` automatically packages your SSH public key into a lightweight `OEMDRV` ISO that Anaconda auto-discovers at boot. This guarantees a 100% automated, non-interactive installation in text mode with live console progress visible in the Tart VM window._
+_Note: `build-base.sh` automatically packages your SSH public key into a lightweight `OEMDRV` ISO that Anaconda auto-discovers at boot. The Kickstart configuration specifies a dynamic `--metalink` repository source, deterministic `/dev/vda` storage layout, and UEFI bootloader, guaranteeing a 100% automated, non-interactive installation in text mode with live console progress visible in the Tart VM window._
 
 If invoking `packer build` directly:
 ```bash
