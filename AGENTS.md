@@ -7,7 +7,7 @@ Persistent sandboxing environment on Apple Silicon macOS using Tart VMs (Fedora 
 - **Base Image Build (`build-base.sh`, `base.pkr.hcl`, `kickstart.ks.pkrtpl`, `base-update.sh`)**:
   - `build-base.sh` renders `kickstart.ks.pkrtpl` with the user's SSH public key into a lightweight `OEMDRV` ISO that Anaconda auto-discovers on boot.
   - Packer provisions a persistent base VM image (`fedora${fedora_version}-server-base`) from a local Fedora Server aarch64 ISO using the `cirruslabs/tart` plugin.
-  - Automated installation runs in text mode without interactive Anaconda GUI: Kickstart uses `--metalink` with `$releasever`/`$basearch`, deterministic storage on `/dev/vda` (`ignoredisk --only-use=vda`, `clearpart --drives=vda`), and UEFI partition bootloader.
+  - Automated installation runs in text mode without interactive Anaconda GUI: Kickstart uses `--metalink` with `$releasever`/`$basearch`, deterministic storage on `/dev/vda` (`ignoredisk --only-use=vda`, `clearpart --drives=vda`), and UEFI bootloader on `/dev/vda` (`bootloader --boot-drive=vda`).
   - `base-update.sh` pre-bakes full developer toolchains: Go, Python 3, Rust (`rustup` / `cargo`), `uv`, `agy` CLI, and Podman (`podman-docker`).
   - Pre-configures user groups (`docker`, `kvm`), enables `podman.socket`, and writes VirtioFS mount to `/etc/fstab`.
 - **Persistent Session (`session.sh`, `provision.sh`)**:

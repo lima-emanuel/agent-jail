@@ -20,7 +20,7 @@ ignoredisk --only-use=vda
 zerombr
 clearpart --all --initlabel --drives=vda
 autopart --type=lvm
-bootloader --location=partition --boot-drive=vda
+bootloader --boot-drive=vda --timeout=1
 
 %packages
 @^server-product-environment
