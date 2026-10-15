@@ -1,0 +1,44 @@
+text
+url --url="https://mirrors.fedoraproject.org/metalink?repo=fedora-${fedora_version}&arch=aarch64"
+
+lang en_US.UTF-8
+keyboard --xlayouts=us
+timezone America/Sao_Paulo --utc
+
+network --bootproto=dhcp --device=link --activate
+firewall --enabled --service=ssh
+selinux --enforcing
+
+rootpw --lock
+user --name=agent --groups=wheel --lock
+sshkey --username=agent "${ssh_public_key}"
+
+services --enabled=sshd
+firstboot --disable
+
+zerombr
+clearpart --all --initlabel
+autopart --type=lvm
+
+%packages
+@^server-product-environment
+openssh-server
+sudo
+curl
+ca-certificates
+%end
+
+%post --erroronfail
+cat > /etc/sudoers.d/90-agent <<'EOF'
+agent ALL=(ALL) NOPASSWD: ALL
+EOF
+chmod 0440 /etc/sudoers.d/90-agent
+
+cat > /etc/ssh/sshd_config.d/10-agent.conf <<'EOF'
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin no
+EOF
+%end
+
+reboot
