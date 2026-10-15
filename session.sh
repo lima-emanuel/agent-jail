@@ -55,6 +55,10 @@ case "$subcommand" in
     echo "Connecting to $VM at $IP..."
     exec ssh -i "$KEY" -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -t "agent@$IP"
     ;;
+  build)
+    shift 1 || true
+    exec ./build-base.sh "${@}"
+    ;;
   start)
     shift 1 || true
     VERSION="${1:-44}"
@@ -66,7 +70,7 @@ case "$subcommand" in
     ;;
   *)
     echo "Unknown command: $subcommand" >&2
-    echo "Usage: $0 [start [VERSION] [HOST_SHARED_DIR]] | list | resume <vm> | stop <vm> | delete <vm>" >&2
+    echo "Usage: $0 [start [VERSION] [HOST_SHARED_DIR]] | build [VERSION] <ISO_PATH> | list | resume <vm> | stop <vm> | delete <vm>" >&2
     exit 1
     ;;
 esac

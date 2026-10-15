@@ -4,9 +4,10 @@ Persistent sandboxing environment on Apple Silicon macOS using Tart VMs (Fedora 
 
 ## Architecture & Lifecycle
 
-- **Base Image Build (`base.pkr.hcl`, `kickstart.ks.pkrtpl`, `base-update.sh`)**:
+- **Base Image Build (`build-base.sh`, `base.pkr.hcl`, `kickstart.ks.pkrtpl`, `base-update.sh`)**:
+  - `build-base.sh` renders `kickstart.ks.pkrtpl` with the user's SSH public key into a lightweight `OEMDRV` ISO that Anaconda auto-discovers on boot.
   - Packer provisions a persistent base VM image (`fedora${fedora_version}-server-base`) from a local Fedora Server aarch64 ISO using the `cirruslabs/tart` plugin.
-  - Automates installation via Kickstart (`/ks.cfg`), configures passwordless sudo for user `agent`, enables SSH public key auth.
+  - Automated installation runs in text mode without interactive Anaconda GUI, with progress visible in the Tart VM window.
   - `base-update.sh` pre-bakes full developer toolchains: Go, Python 3, Rust (`rustup` / `cargo`), `uv`, `agy` CLI, and Podman (`podman-docker`).
   - Pre-configures user groups (`docker`, `kvm`), enables `podman.socket`, and writes VirtioFS mount to `/etc/fstab`.
 - **Persistent Session (`session.sh`, `provision.sh`)**:
@@ -30,12 +31,11 @@ Persistent sandboxing environment on Apple Silicon macOS using Tart VMs (Fedora 
 
 - **Build Base Image**:
   ```bash
-  packer build \
-    -var 'fedora_version=44' \
-    -var "iso_path=$HOME/Downloads/YOUR-FEDORA-44-SERVER-AARCH64.iso" \
-    -var "ssh_private_key_file=$HOME/.ssh/agent_jail" \
-    -var "ssh_public_key_file=$HOME/.ssh/agent_jail.pub" \
-    base.pkr.hcl
+  # Automated unattended install (opens Tart VM window to observe text-mode progress):
+  ./build-base.sh 44 "$HOME/Downloads/YOUR-FEDORA-44-SERVER-AARCH64.iso"
+
+  # Or via session.sh:
+  ./session.sh build 44 "$HOME/Downloads/YOUR-FEDORA-44-SERVER-AARCH64.iso"
   ```
 
 - **Manage Sessions (`session.sh`)**:

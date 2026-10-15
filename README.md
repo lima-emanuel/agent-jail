@@ -55,20 +55,32 @@ Clone → Boot with `--nested` & VirtioFS → Persistent Session
 
 ## 1. Build the Base Image
 
-Initialize the Tart Packer plugin and build the reusable base image:
+Initialize the Tart Packer plugin and build the reusable base image using `./build-base.sh` (or `./session.sh build`):
 
 ```bash
 packer init base.pkr.hcl
 
+# Automated unattended install (opens Tart VM window to observe text-mode progress):
+./build-base.sh 44 "$PATH_TO_ISO"
+
+# Or via session.sh:
+./session.sh build 44 "$PATH_TO_ISO"
+```
+
+_Note: `build-base.sh` automatically packages your SSH public key into a lightweight `OEMDRV` ISO that Anaconda auto-discovers at boot. This guarantees a 100% automated, non-interactive installation in text mode with live console progress visible in the Tart VM window._
+
+If invoking `packer build` directly:
+```bash
 packer build \
   -var 'fedora_version=44' \
   -var "iso_path=$PATH_TO_ISO" \
   -var "ssh_private_key_file=$HOME/.ssh/agent_jail" \
   -var "ssh_public_key_file=$HOME/.ssh/agent_jail.pub" \
+  -var "kickstart_iso_path=/path/to/oemdrv.iso" \
   base.pkr.hcl
 ```
 
-_Note: For future Fedora releases, pass `-var 'fedora_version=45'`._
+_Note: For future Fedora releases, pass `45` instead of `44`._
 
 ---
 
